@@ -1,0 +1,4 @@
+include ':router_anno'
+//include ':app'
+//include ':router_plugin'
+rootProject.name = "LinkRouter"

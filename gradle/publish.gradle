@@ -1,0 +1,141 @@
+apply plugin: 'maven-publish'
+
+def getPublishProperty(String propertyName) {
+    if (rootProject.hasProperty(propertyName)) {
+        return rootProject.findProperty(propertyName)
+    }
+    return System.getenv(propertyName)
+}
+
+def getPublishVersion() {
+    return version
+}
+
+boolean isSnapshotVersion() {
+    String version = getPublishVersion()
+    return version != null && version.toUpperCase().contains("SNAPSHOT")
+}
+
+def getPublishGroupId() {
+    if (group) {
+        return group
+    }
+    return 'com.github.hbzhzw'
+}
+
+def getPublishArtifactId() {
+    return project.hasProperty("artifactId") ? project.getProperty("artifactId") : project.name
+}
+
+def isNeedIncludeDeps() {
+    return project.hasProperty("includeDeps") ? project.getProperty("includeDeps") as Boolean : true
+}
+
+def findDepArtifactId(String projName) {
+    def depProj = rootProject.findProject(projName)
+    return depProj != null && depProj.ext.has("artifactId") 
+            ? depProj.ext.get("artifactId") : projName
+}
+
+def getArtifactTask() {
+    return project.plugins.findPlugin('com.android.library') 
+        ? (isSnapshotVersion() ? bundleDebugAar : bundleReleaseAar)
+        : jar
+}
+
+def getDepArtifactVersion(String projName, String depVersion) {
+    def depProj = rootProject.findProject(projName)
+    return depProj != null ? depProj.version : depVersion
+}
+
+project.afterEvaluate {
+    logger.lifecycle "publish task config: ${getPublishGroupId()}:${getPublishArtifactId()}:${getPublishVersion()}"
+
+    tasks.create("source${name.capitalize()}Jar", Jar) {
+        group = "publishing"
+        description = "package ${name} source to jar"
+        from "${project.projectDir}/src/main/java"
+        from "${project.projectDir}/src/main/kotlin"
+        destinationDir = file("$buildDir/libs/")
+        classifier = 'sources'
+    }
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                groupId = getPublishGroupId()
+                artifactId = getPublishArtifactId()
+                version = getPublishVersion()
+                artifact getArtifactTask()
+                //artifact project.tasks.getByName("source${project.name.capitalize()}Jar")
+                //artifact androidJavadocsJar
+                //artifact androidSourcesJar
+                pom.withXml {
+                    if (!isNeedIncludeDeps()) {
+                        return
+                    }
+                    final dependenciesNode = asNode().appendNode('dependencies')
+                    ext.addDependency = { dep, String scope ->
+                        if (dep.group == null
+                                || dep.version == null
+                                || dep.name == null
+                                || dep.name == "unspecified")
+                            return // ignore invalid dependencies
+                        println "dep: " + dep
+                        final dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', dep.group)
+                        dependencyNode.appendNode('artifactId', findDepArtifactId(dep.name))
+                        dependencyNode.appendNode('version', getDepArtifactVersion(dep.name, dep.version))
+                        dependencyNode.appendNode('scope', scope)
+                        dep.artifacts.each { art ->
+                            println "ext:    ${art.extension} - ${art.classifier}"
+                            dependencyNode.appendNode('type', art.extension)
+                            dependencyNode.appendNode('classifier', art.classifier)
+                        }
+                        if (!dep.transitive) {
+                            // If this dependency is not transitive, we should force exclude all its dependencies from the POM
+                            final exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
+                            exclusionNode.appendNode('groupId', '*')
+                            exclusionNode.appendNode('artifactId', '*')
+                        } else if (!dep.properties.excludeRules.empty) {
+                            // Otherwise add specified exclude rules
+                            final exclusionsNode = dependencyNode.appendNode('exclusions')
+                            dep.properties.excludeRules.each { rule ->
+                                final exclusionNode = exclusionsNode.appendNode('exclusion')
+                                exclusionNode.appendNode('groupId', rule.group ?: '*')
+                                exclusionNode.appendNode('artifactId', rule.module ?: '*')
+                            }
+                        }
+                    }
+
+                    // List all "api" dependencies (for new Gradle) as "compile" dependencies
+                    if (configurations.getNames().contains("api")) {
+                        configurations.api.getDependencies().each { dep -> addDependency(dep, "compile") }
+                    }
+                    // List all "implementation" dependencies (for new Gradle) as "runtime" dependencies
+                    //if (configurations.getNames().contains("implementation")) {
+                    //    configurations.implementation.getDependencies().each { dep -> addDependency(dep, "runtime") }
+                    //}
+                }
+            }
+        }
+
+        repositories {
+            maven {
+                name = repo_name
+                def releasesRepoUrl = repo_url
+                def snapshotsRepoUrl = repo_snapshot_url
+                url = isSnapshotVersion() ? snapshotsRepoUrl : releasesRepoUrl
+                credentials {
+                    username getPublishProperty("MAVEN_USER_NAME")
+                    password getPublishProperty("MAVEN_USER_PWD")
+                }
+
+				println "userName: ${credentials.username}, passwd: ${credentials.password}"
+                authentication{
+                    basic(BasicAuthentication)
+                }
+            }
+        }
+    }
+}
