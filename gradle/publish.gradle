@@ -8,19 +8,22 @@ def getPublishProperty(String propertyName) {
 }
 
 def getPublishVersion() {
-    return version
+    return getPublishProperty("version")
 }
 
 boolean isSnapshotVersion() {
     String version = getPublishVersion()
+    logger.lifecycle "version: $version"
     return version != null && version.toUpperCase().contains("SNAPSHOT")
 }
 
 def getPublishGroupId() {
+    def group = getPublishProperty("group")
+    logger.lifecycle "group: $group"
     if (group) {
         return group
     }
-    return 'com.github.hbzhzw'
+    return 'com.github.hzhang'
 }
 
 def getPublishArtifactId() {
@@ -131,7 +134,7 @@ project.afterEvaluate {
                     password getPublishProperty("MAVEN_USER_PWD")
                 }
 
-				println "userName: ${credentials.username}, passwd: ${credentials.password}"
+				logger.lifecycle "userName: ${credentials.username}, passwd: ${credentials.password}, url: ${url}"
                 authentication{
                     basic(BasicAuthentication)
                 }

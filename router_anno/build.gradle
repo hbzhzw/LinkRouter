@@ -2,6 +2,10 @@ plugins {
     id 'java-library'
 }
 
+ext {
+   artifactId = "router-anno"
+}
+
 apply from: '../gradle/publish.gradle'
 
 java {
