@@ -26,8 +26,9 @@ def getPublishGroupId() {
     return 'io.github.hzhang'
 }
 
+
 def getPublishArtifactId() {
-    return project.hasProperty("artifactId") ? project.getProperty("artifactId") : project.name
+    return project.hasProperty("artifactId") ? project.getProperty("artifactId") : "rplugin"
 }
 
 def isNeedIncludeDeps() {
@@ -66,6 +67,8 @@ project.afterEvaluate {
     publishing {
         publications {
             maven(MavenPublication) {
+// logger.lifecycle "rootProject.artifactId: ${rootProject.artifactId}, project.property: ${project.artifactId}"
+logger.lifecycle "project.property: ${project.artifactId}"
                 groupId = getPublishGroupId()
                 artifactId = getPublishArtifactId()
                 version = getPublishVersion()

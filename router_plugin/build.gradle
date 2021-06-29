@@ -13,7 +13,12 @@ plugins {
     id 'groovy'
 }
 
+ext {
+   artifactId = "router-plugin"
+}
+
 apply from: '../gradle/publish.gradle'
+
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
