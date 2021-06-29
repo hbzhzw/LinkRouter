@@ -23,7 +23,7 @@ def getPublishGroupId() {
     if (group) {
         return group
     }
-    return 'com.github.hzhang'
+    return 'io.github.hzhang'
 }
 
 def getPublishArtifactId() {
@@ -73,6 +73,32 @@ project.afterEvaluate {
                 //artifact project.tasks.getByName("source${project.name.capitalize()}Jar")
                 //artifact androidJavadocsJar
                 //artifact androidSourcesJar
+
+                pom {
+                     name = "LinkRouter"
+                     description = "An android component based architecture library"
+                     url = "https://github.com/hbzhzw/LinkRouter"
+                     licenses {
+                          license {
+                              name = "The Apache License, Version 2.0"
+                              url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                          }
+                     }
+                     developers {
+                          developer {
+                              id = "hbzhzw"
+                              name = "Zhang Hua"
+                              email = "hbzhzw@qq.com"
+                          }
+                     }
+                     scm {
+                         connection = "https://github.com/hbzhzw/LinkRouter.git"
+                         developerConnection = "https://github.com/hbzhzw/LinkRouter.git"
+                         url = "https://github.com/hbzhzw/LinkRouter"
+                     }
+                }
+
+
                 pom.withXml {
                     if (!isNeedIncludeDeps()) {
                         return

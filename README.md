@@ -1,2 +1,2 @@
 # LinkRouter
-The Android component based architecture
+An android component based architecture library"
