@@ -23,7 +23,7 @@ buildscript {
     }
     dependencies {
         classpath "com.android.tools.build:gradle:3.5.4"
-        //classpath "io.github.hbzhzw:router_anno:${router_version}"
+        classpath "io.github.hbzhzw:router-anno:${router_version}"
         //classpath "io.github.hbzhzw:router_plugin:${router_version}"
         //classpath "io.github.hbzhzw:router_anno:0.1.0-SNAPSHOT"
         //classpath "io.github.hbzhzw:router_plugin:0.1.0-SNAPSHOT"

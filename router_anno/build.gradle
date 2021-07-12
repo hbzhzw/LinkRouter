@@ -3,7 +3,7 @@ plugins {
 }
 
 ext {
-   artifactId = "router_anno"
+   artifactId = "router-anno"
 }
 
 apply from: '../gradle/publish.gradle'

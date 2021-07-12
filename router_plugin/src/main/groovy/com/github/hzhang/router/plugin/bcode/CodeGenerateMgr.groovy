@@ -24,8 +24,8 @@ class CodeGenerateMgr {
 
     private static final INIT_APP_MODULE_METHOD = "initAppModules"
     private static final MODULE_APP_CRETAE_SVS_PROV = "createService"
-    private static final String MODULES_MGR = "com.tencent.qqsports.router.ModulesMgr"
-    private static final String ROUTER_MGR = "com.tencent.qqsports.router.RouterMgr"
+    private static final String MODULES_MGR = "com.github.hzhang.router.ModulesMgr"
+    private static final String ROUTER_MGR = "com.github.hzhang.router.RouterMgr"
 
     static CtClass findAppEntryCls(@Nonnull File dest) {
         CtClass appEntryCls = null
@@ -132,11 +132,11 @@ class CodeGenerateMgr {
     private static String createInitAppModuleMethod(List<CtClass> moduleAppClsList) {
         StringBuilder initAppBuilder = new StringBuilder(
                 "private void ${INIT_APP_MODULE_METHOD}() {\n")
-                .append("    com.tencent.qqsports.router.IAppModEntry modEntry;\n")
+                .append("    com.github.hzhang.router.IAppModEntry modEntry;\n")
         for (CtClass ctClass : moduleAppClsList) {
             CtClass moduleSvsCls = getModuleSvsClass(ctClass)
             initAppBuilder.append("    modEntry = new ${ctClass.name}();\n")
-            initAppBuilder.append("    com.tencent.qqsports.router.ModulesMgr.register(\n" +
+            initAppBuilder.append("    com.github.hzhang.router.ModulesMgr.register(\n" +
                     "        " + (moduleSvsCls != null ? "${moduleSvsCls.name}.class" : "null") +
                     ", modEntry);\n")
         }
