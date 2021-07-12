@@ -1,0 +1,22 @@
+plugins {
+    id 'java-library'
+}
+
+ext {
+    artifactId = "router-apt"
+}
+
+apply from: '../gradle/publish.gradle'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+dependencies {
+    api 'com.squareup:javapoet:1.13.0'
+    implementation "io.github.hbzhzw:router-anno:${router_version}"
+    compileOnly 'com.google.auto.service:auto-service-annotations:1.0'
+    compileOnly files("${System.properties['java.home']}/../lib/tools.jar")
+    annotationProcessor 'com.google.auto.service:auto-service:1.0'
+}

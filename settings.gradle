@@ -1,5 +1,6 @@
 include ':router_anno'
 //include ':app'
 include ':router_plugin'
+include ':router_apt'
 include ':lib_router'
 rootProject.name = "LinkRouter"
