@@ -29,7 +29,7 @@ import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
 
 @SuppressWarnings({"unused", "RedundantSuppression"})
-@SupportedAnnotationTypes("com.github.hzhang.router.router.anno.ModuleSvs")
+@SupportedAnnotationTypes("com.github.hzhang.router.anno.ModuleSvs")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @AutoService(Processor.class)
 public class RouteAnnoProcessor extends AbstractProcessor {

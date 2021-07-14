@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.github.hzhang.router.biz">
+
+    <application>
+        <activity android:name=".ui.BizMainActivity"></activity>
+        <activity android:name=".ui.BizPayActivity" />
+    </application>
+
+</manifest>

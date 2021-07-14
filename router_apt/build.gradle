@@ -15,7 +15,7 @@ java {
 
 dependencies {
     api 'com.squareup:javapoet:1.13.0'
-    implementation "io.github.hbzhzw:router-anno:${router_version}"
+    api "io.github.hbzhzw:router-anno:${router_version}"
     compileOnly 'com.google.auto.service:auto-service-annotations:1.0'
     compileOnly files("${System.properties['java.home']}/../lib/tools.jar")
     annotationProcessor 'com.google.auto.service:auto-service:1.0'
